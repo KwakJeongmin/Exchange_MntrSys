@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +17,9 @@ public class SchedulerService {
 
 	Logger logger = LoggerFactory.getLogger( getClass() );
 	private final SchedulerMapper schedulerMapper;
-	private String API_KEY = "1ZNTBXIL7M1P8OXVIY4G";
+	
+	@Value("${ecos.api.key}")
+    private String apiKey;
 	
 	public SchedulerService(SchedulerMapper schedulerMapper) {
 		this.schedulerMapper = schedulerMapper;
@@ -33,7 +36,7 @@ public class SchedulerService {
         String startDate = yesterday.format(formatter);
         String endDate = today.format(formatter);
 		
-		String apiUrl = "https://ecos.bok.or.kr/api/StatisticSearch/"+API_KEY+"/json/kr/1/1000/731Y001/D/"+startDate+"/"+endDate+"/0000001";
+		String apiUrl = "https://ecos.bok.or.kr/api/StatisticSearch/"+apiKey+"/json/kr/1/1000/731Y001/D/"+startDate+"/"+endDate+"/0000001";
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		
