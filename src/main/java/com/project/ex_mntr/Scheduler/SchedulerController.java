@@ -1,6 +1,7 @@
 package com.project.ex_mntr.Scheduler;
 
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +19,7 @@ public class SchedulerController {
 	}	
 	
 //	@Scheduled(cron = "0 0 8 7 * *") // 매월 7일 마다 8시 실행
-//	@Scheduled(cron = "0 0/1 * * * *")
+	@Scheduled(cron = "0 0/1 * * * *") // 1분에 한 번 실행
 	public void schedule1Day() {
 		try {
 			scheduleEcosData(null);

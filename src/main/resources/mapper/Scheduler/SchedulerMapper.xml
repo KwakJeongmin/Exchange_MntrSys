@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.ex_mntr.Scheduler.SchedulerMapper">
+
+	<insert id="scheduleEcosData" parameterType="com.project.ex_mntr.Scheduler.EcosDataModel">
+		<![CDATA[
+		INSERT INTO ex_rate_info
+        (STAT_CODE, STAT_NAME, ITEM_CODE1, ITEM_NAME1, ITEM_CODE2, ITEM_NAME2,
+         ITEM_CODE3, ITEM_NAME3, ITEM_CODE4, ITEM_NAME4, UNIT_NAME, WGT,
+         BASE_DATE, DATA_VALUE)
+        VALUES
+        (
+            #{statCode},
+            #{statName},
+            #{itemCode1},
+            #{itemName1},
+            #{itemCode2},
+            #{itemName2},
+            #{itemCode3},
+            #{itemName3},
+            #{itemCode4},
+            #{itemName4},
+            #{unitName},
+            #{wgt},
+            #{baseDate},
+            #{dataValue}
+        )
+        ON DUPLICATE KEY UPDATE
+        DATA_VALUE = #{dataValue},
+        updated_at = CURRENT_TIMESTAMP
+		]]>
+	</insert>
+
+</mapper>

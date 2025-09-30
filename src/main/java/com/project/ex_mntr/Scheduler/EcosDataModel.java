@@ -3,50 +3,52 @@ package com.project.ex_mntr.Scheduler;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EcosDataModel {
 	
 	@JsonProperty("id")
     private Long id;
 
-    @JsonProperty("stat_code")
+    @JsonProperty("STAT_CODE")
     private String statCode;
 
-    @JsonProperty("stat_name")
+    @JsonProperty("STAT_NAME")
     private String statName;
 
-    @JsonProperty("item_code1")
+    @JsonProperty("ITEM_CODE1")
     private String itemCode1;
 
-    @JsonProperty("item_name1")
+    @JsonProperty("ITEM_NAME1")
     private String itemName1;
 
-    @JsonProperty("item_code2")
+    @JsonProperty("ITEM_CODE2")
     private String itemCode2;
 
-    @JsonProperty("item_name2")
+    @JsonProperty("ITEM_NAME2")
     private String itemName2;
 
-    @JsonProperty("item_code3")
+    @JsonProperty("ITEM_CODE3")
     private String itemCode3;
 
-    @JsonProperty("item_name3")
+    @JsonProperty("ITEM_NAME3")
     private String itemName3;
 
-    @JsonProperty("item_code4")
+    @JsonProperty("ITEM_CODE4")
     private String itemCode4;
 
-    @JsonProperty("item_name4")
+    @JsonProperty("ITEM_NAME4")
     private String itemName4;
 
-    @JsonProperty("unit_name")
+    @JsonProperty("UNIT_NAME")
     private String unitName;
 
-    @JsonProperty("wgt")
+    @JsonProperty("WGT")
     private String wgt;
 
     @JsonProperty("base_date")

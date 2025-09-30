@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Service
 public class SchedulerService {
@@ -35,17 +37,46 @@ public class SchedulerService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String startDate = yesterday.format(formatter);
         String endDate = today.format(formatter);
+        
+        System.out.println(startDate);
+        System.out.println(endDate);
 		
 		String apiUrl = "https://ecos.bok.or.kr/api/StatisticSearch/"+apiKey+"/json/kr/1/1000/731Y001/D/"+startDate+"/"+endDate+"/0000001";
 		
-		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper()
+			.registerModule(new JavaTimeModule())
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
 		try {
-			// String값으로 저장된 BODY값 MODEL로 변환하여 저장
-			EcosDataModel ecosDataModel = objectMapper.readValue(getApiData(apiUrl), EcosDataModel.class);
+			String apiResponse = getApiData(apiUrl);
+			System.out.println("=== API Response ===");
+			System.out.println(apiResponse);
 			
-			schedulerMapper.scheduleEcosData(ecosDataModel);
+			System.out.println("\n=== Attempting to map response ===");
+			EcosResponse response = objectMapper.readValue(apiResponse, EcosResponse.class);
+			System.out.println("EcosResponse mapped: " + response);
+			
+			if (response != null) {
+				System.out.println("StatisticSearch: " + response.getStatisticSearch());
+				
+				if (response.getStatisticSearch() != null) {
+					System.out.println("Rows: " + response.getStatisticSearch().getRows());
+					
+					if (response.getStatisticSearch().getRows() != null && 
+						!response.getStatisticSearch().getRows().isEmpty()) {
+						
+						EcosDataModel ecosDataModel = response.getStatisticSearch().getRows().get(0);
+						System.out.println("\n=== Mapped Model ===");
+						System.out.println(ecosDataModel);
+						
+						schedulerMapper.scheduleEcosData(ecosDataModel);
+					}
+				}
+			}
 		} catch (Exception e) {
+			System.out.println("\n=== Error Details ===");
+			System.out.println("Error type: " + e.getClass().getName());
+			System.out.println("Error message: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
