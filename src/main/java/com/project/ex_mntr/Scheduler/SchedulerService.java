@@ -1,0 +1,59 @@
+package com.project.ex_mntr.Scheduler;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class SchedulerService {
+
+	Logger logger = LoggerFactory.getLogger( getClass() );
+	private final SchedulerMapper schedulerMapper;
+	private String API_KEY = "1ZNTBXIL7M1P8OXVIY4G";
+	
+	public SchedulerService(SchedulerMapper schedulerMapper) {
+		this.schedulerMapper = schedulerMapper;
+	}
+	
+	public void scheduleEcosData(String datetime) throws Exception {
+		// 1. 오늘 날짜
+        LocalDate today = LocalDate.now();
+        // 2. 어제 날짜
+        LocalDate yesterday = today.minusDays(1);
+        
+        // 3. API에서 요구하는 형식: YYYYMMDD
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String startDate = yesterday.format(formatter);
+        String endDate = today.format(formatter);
+		
+		String apiUrl = "https://ecos.bok.or.kr/api/StatisticSearch/"+API_KEY+"/json/kr/1/1000/731Y001/D/"+startDate+"/"+endDate+"/0000001";
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		try {
+			// String값으로 저장된 BODY값 MODEL로 변환하여 저장
+			EcosDataModel ecosDataModel = objectMapper.readValue(getApiData(apiUrl), EcosDataModel.class);
+			
+			schedulerMapper.scheduleEcosData(ecosDataModel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String getApiData(String apiUrl) {
+		RestTemplate restTemplate = new RestTemplate();
+        // REST API 호출 및 응답 받기
+		ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
+		// API 데이터 BODY값 추출
+		String responseBody = responseEntity.getBody();
+		
+		return responseBody;
+	}
+}
